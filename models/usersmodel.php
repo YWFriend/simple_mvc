@@ -36,7 +36,7 @@ class UsersModel extends Model
 
         $data = array(
             $this->_name,
-            $this->_password,
+            password_hash($this->_password, PASSWORD_DEFAULT),
             $this->_email,
             $this->_isAdmin
         );
@@ -61,11 +61,10 @@ class UsersModel extends Model
     {
         $sql = "SELECT * 
         FROM users
-        WHERE email = ? AND password = ?";
+        WHERE email = ?";
 
         $data = [
             $this->_email,
-            $this->_password
         ];
         $this->_setSql($sql);
         $user = $this->getRow($data);
@@ -75,6 +74,10 @@ class UsersModel extends Model
             return false;
         }
 
+        if (!password_verify($this->_password, $user['password']))
+        {
+            return false;
+        }
         return $user;
     }
 }

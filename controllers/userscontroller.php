@@ -14,6 +14,14 @@ class UsersController extends Controller
         return $this->_view->output();
     }
 
+    public function logout()
+    {
+        $session = Session::getInstance();
+        $session->destroy();
+		header('location: /');
+		exit;
+    }
+
     public function save()
     {
         if (!isset($_POST['userFormSubmit']))
@@ -67,11 +75,16 @@ class UsersController extends Controller
             $contact->setEmail($email);
             $contact->setIsAdmin($isAdmin);
 
-            if ($contact->checkUser() != 0)
+            print_r($contact->checkUser());
+            
+            if ($contact->checkUser())
             {
+                print_r($contact->checkUser());
+                print_r($email);
+
                 $this->_setView('register');
                 $this->_view->set('title', 'Invalid form data!');
-                $this->_view->set('errors', array("Пользователь с таким e-mail уже существует"));
+                $this->_view->set('errors', ["Пользователь с таким e-mail уже существует"]);
                 $this->_view->set('formData', $_POST);
                 return $this->_view->output();
             }
@@ -98,20 +111,21 @@ class UsersController extends Controller
         if (!isset($_POST['userFormSubmit']))
         {
             header('Location: /users/signin');
-        }
+        }$errors = array();
         $check = true;
+
         $password = isset($_POST['password']) ? trim($_POST['password']) : NULL;
         $email = isset($_POST['email']) ? trim($_POST['email']) : "";
 
-        if (empty($password))
-        {
-            $check = false;
-            array_push($errors, "Password is required!");
-        }
-        else if (empty($email))
+        if (empty($email))
         {
             $check = false;
             array_push($errors, "E-mail is required!");
+        }
+        else if (empty($password))
+        {
+            $check = false;
+            array_push($errors, "Password is required!");
         }
         else if (!filter_var( $email, FILTER_VALIDATE_EMAIL ))
         {
@@ -148,13 +162,15 @@ class UsersController extends Controller
                 $session->username = $userData['name'];
                 $session->email = $userData['email'];
 
-                print_r($_SESSION);
                 $this->_setView('success');
                 $this->_view->set('title', 'Store success!');
+                print_r($_SESSION);
             } 
             else 
             {
-                $this->_view->set('errors', "Неверные email или пароль");
+                $this->_setView('signin');
+                $this->_view->set('title', 'Invalid data!');
+                $this->_view->set('errors', ["Неверные email или пароль"]);
                 return $this->_view->output();
             }
         }

@@ -15,8 +15,9 @@ class TasksController extends Controller
             $tasks = $this->_model->getTasks();
             $this->_view->set('tasks', $tasks);
             $this->_view->set('title', 'All tasks from the database');
-
+            print_r($_SESSION);
             return $this->_view->output();
+            
 
         } catch (Exception $e) {
             echo "Application error:" . $e->getMessage();

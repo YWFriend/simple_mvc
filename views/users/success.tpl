@@ -6,7 +6,7 @@
         <title><?php echo $title; ?></title>
     </head>
     <body>
-        <?php include HOME . DS .  'includes' . DS . 'menu.inc.php'; ?>
+        <?php include HOME . DS .  'includes' . DS . 'menu.inc.php';?>
 
         <h1><?php echo $title; ?></h1>
     </body>
